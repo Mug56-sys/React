@@ -34,6 +34,7 @@ export default function Lists() {
 
   return (
     <>
+    <div className=" flex flex-col justify-center text-2xl  items-center ">
       {isLoading ? (
         <p>Loading...</p>
       ) : (
@@ -56,6 +57,8 @@ export default function Lists() {
           ) : null}
         </div>
       )}
+      {error ?  <p>Something went wrong</p> :
+     <>
       {HolidaysList.isLoading ? (
         <p>Loading...</p>
       ) : (
@@ -71,7 +74,10 @@ export default function Lists() {
           ) : null}
         </div>
       )}
-      {error ? <p>Something went wrong</p> : null}
+      </>
+      }
+      
+    </div>
     </>
   );
 }
