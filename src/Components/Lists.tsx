@@ -2,11 +2,16 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 export default function Lists() {
+  const [error, setError] = useState(false);
   const [selected, useSelected] = useState("NL");
   const { data, isLoading } = useQuery({
     queryKey: ["LangList"],
     queryFn: async () => {
       const response = await fetch(`https://openholidaysapi.org/countries`);
+      if (!response.ok) {
+        setError(true);
+        throw new Error("Network response was not ok");
+      }
       return await response.json();
     },
   });
@@ -18,17 +23,21 @@ export default function Lists() {
       const response = await fetch(
         `https://openholidaysapi.org/PublicHolidays?countryIsoCode=${selected}&validFrom=${DateNow.getFullYear()}-01-01&validTo=${DateNow.getFullYear()}-12-31&languageIsoCode=EN`
       );
+      if (!response.ok) {
+        setError(true);
+        throw new Error("Network response was not ok");
+      }
       return await response.json();
     },
   });
   const HolidaysListData = HolidaysList?.data;
- 
+
   return (
     <>
-        {isLoading ? (
+      {isLoading ? (
         <p>Loading...</p>
       ) : (
-        <div  className="text-4xl">
+        <div className="text-4xl">
           {data ? (
             <select
               required
@@ -50,7 +59,7 @@ export default function Lists() {
       {HolidaysList.isLoading ? (
         <p>Loading...</p>
       ) : (
-        <div >
+        <div>
           {HolidaysListData ? (
             <div className="w-[90%] max-w-3xl h-[400px] overflow-y-auto bg-white shadow-lg rounded-xl p-4">
               {HolidaysListData.map((Holiday: any, index: number) => (
@@ -58,11 +67,11 @@ export default function Lists() {
                   key={index}
                 >{`Holiday: ${Holiday.name[0].text}  :  ${Holiday.startDate}`}</p>
               ))}
-            </div >
+            </div>
           ) : null}
         </div>
       )}
-
+      {error ? <p>Something went wrong</p> : null}
     </>
-  )
+  );
 }
